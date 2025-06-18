@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Music Video Tube</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🎵 Music Video Tube 🎵</h1>
+  <div class="top-bar">
+    <h1>🎵 Music Video Tube</h1>
+    <div class="controls">
+      <input type="text" id="search-input" placeholder="Search music videos..." />
+      <button id="toggle-mode">🌗</button>
+    </div>
+  </div>
+
   <div id="video-list"></div>
+
   <script src="script.js"></script>
 </body>
 </html>
+
