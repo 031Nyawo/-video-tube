@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Music Video Tube</title>
   <link rel="stylesheet" href="style.css" />
-  
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
@@ -20,19 +20,27 @@
     </div>
   </header>
 
-  <!-- Auth Section -->
+  <!-- Authentication Section -->
   <section id="auth-section">
     <input type="email" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
     <button onclick="signUp()">Sign Up</button>
     <button onclick="login()">Login</button>
     <button onclick="logout()">Logout</button>
-    <p id="user-status">Not logged in</p>
+    <p id="user-status"></p>
   </section>
 
-  <!-- Video Area -->
+  <!-- Upload Section -->
+  <section id="upload-section">
+    <h2>Upload a Music Video</h2>
+    <input type="file" id="videoUpload" accept="video/*" />
+    <button onclick="uploadVideo()">Upload</button>
+    <p id="upload-status"></p>
+  </section>
+
+  <!-- Video Display Section -->
   <main id="videoGrid">
-    <!-- Video Cards will go here -->
+    <!-- Videos will be displayed here -->
   </main>
 
   <script src="script.js"></script>
