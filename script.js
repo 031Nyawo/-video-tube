@@ -1,58 +1,7 @@
-// Firebase Authentication Logic
+// Firestore reference
+const db = firebase.firestore();
 
-function signUp() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      alert("Signed up successfully!");
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-}
-
-function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  firebase.auth().signInWithEmailAndPassword(email, password)
-    .then(() => {
-      alert("Logged in successfully!");
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-}
-
-function logout() {
-  firebase.auth().signOut().then(() => {
-    alert("Logged out");
-  });
-}
-
-firebase.auth().onAuthStateChanged((user) => {
-  const status = document.getElementById("user-status");
-  if (user) {
-    status.innerText = `Logged in as: ${user.email}`;
-  } else {
-    status.innerText = "Not logged in";
-  }
-});
-
-// Theme toggle (dark/light mode)
-function toggleTheme() {
-  document.body.classList.toggle("light-mode");
-}
-
-// ------------------- Cloudinary Upload & Video Display ---------------------
-
-// Your Cloudinary details - REPLACE with your own
-const cloudName = 'your_cloud_name';
-const uploadPreset = 'your_unsigned_upload_preset';
-
-// Store uploaded videos with titles for rendering & filtering
+// Store uploaded videos
 const videos = [];
 
 function uploadVideo() {
@@ -71,16 +20,25 @@ function uploadVideo() {
 
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', uploadPreset);
+  formData.append('upload_preset', 'your_unsigned_upload_preset');
 
-  fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
+  fetch(`https://api.cloudinary.com/v1_1/your_cloud_name/video/upload`, {
     method: 'POST',
     body: formData
   })
   .then(res => res.json())
   .then(data => {
+    const videoData = {
+      url: data.secure_url,
+      title,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // Save to Firestore
+    return db.collection("videos").add(videoData);
+  })
+  .then(() => {
     status.innerText = "Upload successful!";
-    displayVideo(data.secure_url, title);
     fileInput.value = "";
     titleInput.value = "";
   })
@@ -90,14 +48,28 @@ function uploadVideo() {
   });
 }
 
-function displayVideo(url, title = "Untitled") {
-  videos.push({ url, title });
-  renderVideos(videos);
+// Load all videos from Firestore on page load
+function fetchVideos() {
+  db.collection("videos")
+    .orderBy("createdAt", "desc")
+    .get()
+    .then(snapshot => {
+      videos.length = 0; // clear existing
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        videos.push({ title: data.title, url: data.url });
+      });
+      renderVideos(videos);
+    })
+    .catch(err => {
+      console.error("Error fetching videos:", err);
+    });
 }
 
+// Render videos
 function renderVideos(videoList) {
   const grid = document.getElementById('videoGrid');
-  grid.innerHTML = ''; // Clear existing videos
+  grid.innerHTML = '';
 
   videoList.forEach(video => {
     const videoCard = document.createElement('div');
@@ -113,12 +85,14 @@ function renderVideos(videoList) {
   });
 }
 
-// Search/filter functionality
-const searchBar = document.getElementById('searchBar');
-searchBar.addEventListener('input', (e) => {
+// Filter videos
+document.getElementById('searchBar').addEventListener('input', e => {
   const query = e.target.value.toLowerCase();
-  const filteredVideos = videos.filter(video =>
+  const filtered = videos.filter(video =>
     video.title.toLowerCase().includes(query)
   );
-  renderVideos(filteredVideos);
+  renderVideos(filtered);
 });
+
+// Call fetchVideos when page loads
+window.onload = fetchVideos;
