@@ -1,22 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Music Video Tube</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
 </head>
 <body>
-  <div class="top-bar">
+  <header>
     <h1>🎵 Music Video Tube</h1>
-    <div class="controls">
-      <input type="text" id="search-input" placeholder="Search music videos..." />
-      <button id="toggle-mode">🌗</button>
+    <div>
+      <input type="text" id="searchBar" placeholder="Search for videos..." />
+      <button onclick="toggleTheme()">Toggle Theme</button>
     </div>
-  </div>
+  </header>
 
-  <div id="video-list"></div>
+  <!-- Auth Section -->
+  <section id="auth-section">
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="login()">Login</button>
+    <button onclick="logout()">Logout</button>
+    <p id="user-status">Not logged in</p>
+  </section>
+
+  <!-- Video Area -->
+  <main id="videoGrid">
+    <!-- Video Cards will go here -->
+  </main>
 
   <script src="script.js"></script>
 </body>
 </html>
-
